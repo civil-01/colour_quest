@@ -95,7 +95,13 @@ class StartGame:
 
         
 
-            
+class play:
+    """
+    Interface for plaing the Colour Quest Game
+    """            
+
+    def __init__(self, how_many):
+        
 
 
 

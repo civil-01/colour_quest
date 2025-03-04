@@ -78,8 +78,11 @@ class StartGame:
         try:
             rounds_wanted = int(rounds_wanted)
             if rounds_wanted > 0:
-                # temporary success message, replace with call to PlayGame class
-                self.choose_label.config(text=f"You have chose to play {rounds_wanted} rounds")
+                # invoke play calss (and take accross number of rounds)
+                play(rounds_wanted)
+                #hide root window (ie hide rounds choice window)
+                root.withdraw()
+
             else:
                 has_errors = "yes"
 
@@ -101,7 +104,16 @@ class play:
     """            
 
     def __init__(self, how_many):
-        
+        self.play_box = Toplevel()
+
+        self.game_frame = Frame(self.play_box)
+        self.game_frame.grid(padx=10, pady=10)
+
+        self.game_heading_label = Label(self.game_frame, text=f"Round 0 of {how_many}",
+                                        font=("Arial", "16", "bold"))
+        self.game_heading_label.grid(row=0)
+
+
 
 
 

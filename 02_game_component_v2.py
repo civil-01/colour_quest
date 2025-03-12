@@ -1,4 +1,5 @@
 import csv
+import random
 from tkinter import *
 from functools import partial # to prevent unwanted winows
 
@@ -22,7 +23,47 @@ def get_colours():
     return all_colours
 
 
+def get_round_colours():
 
+    """
+    Choose four colurs from larger list ensuring that the scores are all different.
+    :return : list of colours and score to beat (median of scores)
+    """
+
+    all_colour_list = get_colours()
+
+    round_colours = []
+    colour_scores = []
+
+    # loop until we have four colours with different scores
+    while len(round_colours) < 4:
+        potential_colour = random.choice(all_colour_list)
+
+        # get the score and check its not a duplicate
+        if potential_colour[1] not in colour_scores:
+            round_colours.append(potential_colour)
+            colour_scores.append(potential_colour[1])
+    
+    # change score to integers
+    int_scores = [int(x) for x in colour_scores]
+
+    # get median score / target score
+    int_scores.sort()
+    median = (int_scores[1] + int_scores[2]) / 2
+    median = round_ans(median)
+
+    return round_colours, median
+
+
+def round_ans(val):
+    """
+    Rounds numbers to nearest integer
+    :param val: number to be rounded.
+    :return: Rounded number (an integer)
+    """
+    var_rounded = (val * 2 + 2) // 2
+    raw_unrounded = "{:.0f}".format(var_rounded)
+    return int(raw_unrounded)
 
 
 # classes start here
@@ -69,6 +110,17 @@ class play:
     """            
 
     def __init__(self, how_many):
+
+        # integers / string variables
+        self.target_score = IntVar()
+
+        # rounds played - start with zero
+        self.rounds_played = IntVar()
+        self.rounds_played.set(0)
+
+        self.rounds_wanted = IntVar()
+        self.rounds_wanted.set(how_many)
+
         self.play_box = Toplevel()
 
         self.game_frame = Frame(self.play_box)
@@ -133,7 +185,25 @@ class play:
             control_ref_list.append(make_control_button)
 
 
+        # Once interface has been created, invoke new
+        # round function for first round
+        self.new_round()
 
+    def new_round(self):
+        """
+        Chooses four colours, works out median for score to beat. configures
+        buttons with chosen colours
+        """
+
+        # retrieve number of rounds played, add one to it and configure heading
+        rounds_played = self.rounds_played.get()
+        rounds_played += 1
+        self.rounds_played.set(rounds_played)
+
+        rounds_wanted = self.rounds_wanted.get()
+
+        #  get round colours and median score...
+        self.round_colour_list, median = get_round_colours()
 
 
 

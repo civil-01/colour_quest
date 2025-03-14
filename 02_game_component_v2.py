@@ -121,6 +121,11 @@ class play:
         self.rounds_wanted = IntVar()
         self.rounds_wanted.set(how_many)
 
+        # colour list lists and score list
+        self.round_colour_list = []
+        self.all_scores_list = []
+        self.all_medians_list = []
+
         self.play_box = Toplevel()
 
         self.game_frame = Frame(self.play_box)
@@ -143,7 +148,7 @@ class play:
                                     bg=item[2], wraplength=300, justify="left")
             self.make_label.grid(row=item[3], pady=10, padx=10)
 
-            play_labels_ref.append(item)
+            play_labels_ref.append(self.make_label)
         
         # retrieve labels so they can be configured later
         self.heading_label = play_labels_ref[0]
@@ -154,13 +159,19 @@ class play:
         self.colour_frame = Frame(self.game_frame)
         self.colour_frame.grid(row=3)
 
+        self.colour_button_ref = []
+        self.colour_button_list = []
+
         # create four buttons in a 2 x 2 grid
         for item in range(0, 4):
             self.colour_button = Button(self.colour_frame, font=("arial", "12"),
-                                        text="colour Name", width=15)
+                                        text="colour Name", width=15,
+                                        command=partial(self.round_results, item))
             self.colour_button.grid(row=item // 2,
                                     column=item % 2,
                                     padx=5, pady=5)
+            
+            self.colour_button_ref.append(self.colour_button)
         
         # frame to hold hints and stats buttons
         self.hints_stats_frame = Frame(self.game_frame)
@@ -184,6 +195,11 @@ class play:
 
             control_ref_list.append(make_control_button)
 
+        # retrieve next, stats and end button so that they can be configured
+        self.next_button = control_ref_list[0]
+        self.stats_button = control_ref_list[2]
+        self.end_game_button = control_ref_list[3]
+
 
         # Once interface has been created, invoke new
         # round function for first round
@@ -205,7 +221,24 @@ class play:
         #  get round colours and median score...
         self.round_colour_list, median = get_round_colours()
 
+        # update heading, and score to beat labels. "hide" results label
+        self.heading_label.config(text=f"Round {rounds_played} of {rounds_wanted}")
+        self.target_label.config(text=f"Target Score: {median}", font=("Arial", "14", "bold"))
+        self.results_label.config(text=f"{'=' * 7}", bg="#F0F0F0")
 
+        # configure buttons using foreground and background colours from list
+        # enable colur buttons (disabled at the end of tne last round)
+        for count, item in enumerate(self.colour_button_ref):
+            item.config(fg=self.round_colour_list[count][2],
+                        bg=self.round_colour_list[count][0],
+                        text=self.round_colour_list[count][0], state=NORMAL)
+
+        self.next_button.config(state=DISABLED)
+
+    def round_results(self, user_choice):
+        """
+        
+        """
 
     def close_play(self):
         # reshow root (ie: choose rounds) and end current

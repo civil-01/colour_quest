@@ -237,8 +237,30 @@ class play:
 
     def round_results(self, user_choice):
         """
-        
+        Retrieves which butoon was pushed (index 0 - 3), retrieves
+        score and the compares it with median, updates reults
+        and adds results to stats list.
         """
+        # get user score and colour based on buttons press..
+        score = int(self.round_colour_list[user_choice][1])
+
+        # alternate way to get button name. good for if buttons have been scrambled
+        colour_name = self.colour_button_ref[user_choice].cget('text')
+
+        # retrieve target score and compare with user score to find round result
+        target =self.target_score.get()
+
+        if score >= target:
+            result_text = f"Success! {colour_name} earned you {score} points"
+            result_bg = "#82B366"
+            self.all_scores_list.append(score)
+
+        else:
+            result_text = f"Oops {colour_name} ({score}) is less than the target."
+            result_bg = "#F8CECC"
+
+        self.results_label.config(text=result_text, bg=result_bg)
+
 
     def close_play(self):
         # reshow root (ie: choose rounds) and end current

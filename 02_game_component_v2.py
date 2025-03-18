@@ -179,7 +179,7 @@ class play:
 
         # list for buttons (frame | text | bg | command | width | row | column)
         control_button_list = [
-            [self.game_frame, "Next Round", "#0057D8", "", 21, 5, None],
+            [self.game_frame, "Next Round", "#0057D8", self.new_round, 21, 5, None],
             [self.hints_stats_frame, "Hints", "#FF8000", "", 10, 0, 0],
             [self.hints_stats_frame, "Stats", "#333333", "", 10, 0, 1],
             [self.game_frame, "End", "#990000", self.close_play, 21, 7, None],
@@ -249,6 +249,7 @@ class play:
 
         # retrieve target score and compare with user score to find round result
         target =self.target_score.get()
+        self.all_medians_list.append(target)
 
         if score >= target:
             result_text = f"Success! {colour_name} earned you {score} points"
@@ -258,8 +259,25 @@ class play:
         else:
             result_text = f"Oops {colour_name} ({score}) is less than the target."
             result_bg = "#F8CECC"
+            self.all_scores_list.append(0)
 
         self.results_label.config(text=result_text, bg=result_bg)
+
+        # enable stats and next buttons, disable colour buttons
+        self.next_button.config(state=NORMAL)
+        self.stats_button.config(state=NORMAL)
+
+        # check to see if game is over
+        rounds_played = self.rounds_played.get()
+        rounds_wanted = self.rounds_wanted.get()
+
+        if rounds_played == rounds_wanted:
+            self.next_button.config(state=DISABLED, text="Game Over")
+            self.end_game_button.config(text="Play Again", bg="#006600")
+
+        for item in self.colour_button_ref:
+            item.config(state=DISABLED)
+
 
 
     def close_play(self):
